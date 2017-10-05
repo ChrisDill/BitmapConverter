@@ -11,12 +11,26 @@ namespace libEPL2Bitmap
 
     public partial class EPL2Bitmap : IEPL2Bitmap
     {
+        public static Font font = new Font("Times New Roman", 12.0f);
+        public static Graphics graphics;
+        public static Point point;
+        public static int spacing;
+
         public Bitmap ConvertFromString(string EPL)
         {
             var lines = EPL.Split(Environment.NewLine.ToCharArray());
-            Bitmap bmp = null;
+
+            Bitmap bmp = new Bitmap(200, 200);
+            graphics = Graphics.FromImage(bmp);
+            graphics.FillRectangle(Brushes.Gray, 0, 0, 200, 200);
+
+            // styling
+            point = new Point(0, 0);
+            spacing = 15;
+          
             foreach (var line in lines)
             {
+                if (line == string.Empty) continue;
                 var type = GetEPLType(line.Substring(0, 1).ToCharArray()[0]);
 
                 switch (type)
@@ -60,7 +74,7 @@ namespace libEPL2Bitmap
 
         private static void ApplyNewLine(string line, ref Bitmap bmp)
         {
-            throw new NotImplementedException();
+            point.Y += spacing;
         }
 
         private static void ApplySetting(string line)
@@ -75,11 +89,7 @@ namespace libEPL2Bitmap
 
         private static void RenderString(string line, ref Bitmap bmp)
         {
-            throw new NotImplementedException();
-        }
-
-        
+            graphics.DrawString(line, font, Brushes.Black, point);
+        } 
     }
-
-
 }
