@@ -1,2 +1,2 @@
 # BitmapConverter
-.Net that outputs a bitmap from EPL/SPL 
+A .Net Library that converts an EPL / ZPL string to a bitmap 
