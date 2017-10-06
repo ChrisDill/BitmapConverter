@@ -30,19 +30,11 @@ namespace libEPL2Bitmap
             // Test(@".\free3of9\free3of9.ttf");
             Test(@"free3of9.ttf");
 
-
             var lines = EPL.Split(Environment.NewLine.ToCharArray());
 
             Bitmap bmp = new Bitmap(344, 200);
             graphics = Graphics.FromImage(bmp);
-<<<<<<< HEAD
             graphics.FillRectangle(Brushes.White, 0, 0, 344, 200);
-=======
-            graphics.FillRectangle(Brushes.Gray, 0, 0, 200, 200); // if this is meant to be the size of the label (for background) make it the q/Q size
-
-            // styling
-            point = new Point(0, 0);
->>>>>>> 6dfa3462eae31248ca6d1b13bf31b1fbf8a8eb06
             spacing = 15;
 
             foreach (var line in lines)
@@ -76,29 +68,20 @@ namespace libEPL2Bitmap
                         SetQuantity(strippedLine);
                         break;
                     case EPLTypeEnum.Unknown:
-<<<<<<< HEAD
-                        var num = lines.ToList().IndexOf(line);
+                        var num = lines.ToList().IndexOf(strippedLine);
                         break;
                         // throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
-=======
-                        var num = lines.ToList().IndexOf(strippedLine);
-                        throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
->>>>>>> 6dfa3462eae31248ca6d1b13bf31b1fbf8a8eb06
                 }
             }
             return bmp;
         }
 
-<<<<<<< HEAD
         public static int GetArg(int i)
         {
             return int.Parse(args[i]);
         }
 
-        private static void SetQuantity(string line)
-=======
         private void ApplyNewLine()
->>>>>>> 6dfa3462eae31248ca6d1b13bf31b1fbf8a8eb06
         {
             //throw new NotImplementedException();
         }
@@ -131,7 +114,6 @@ namespace libEPL2Bitmap
 
         private static void RenderString(string line, ref Bitmap bmp)
         {
-<<<<<<< HEAD
             int x = GetArg(0);
             int y = GetArg(1);
             int rotation = GetArg(2);
@@ -140,12 +122,6 @@ namespace libEPL2Bitmap
             int muliplier = GetArg(5);
             string text = args[7];
             graphics.DrawString(text, font, Brushes.Black, x, y);
-        } 
-=======
-            throw new NotImplementedException();
         }
-
-        
->>>>>>> 6dfa3462eae31248ca6d1b13bf31b1fbf8a8eb06
     }
 }
