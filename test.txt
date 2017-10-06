@@ -1,3 +1,4 @@
-Asometext
-N
-Aothertext
+A0,0,0,1,1,1,N,"sometext" ; A = Type 0 = Y pos, 0 = X pos ,0 = rotation , 1 = font Size, 1 = Font Y size multiplier, 1 = Font X size multiplier, N = Blank on white, "" = Ascii string ; = comment
+N ; newline
+A30,30,1,2,3,4,R,"othertext"
+P1 ; print quantity, we can probable ignore
