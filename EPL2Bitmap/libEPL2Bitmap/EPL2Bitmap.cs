@@ -17,30 +17,31 @@ namespace libEPL2Bitmap
             Bitmap bmp = null;
             foreach (var line in lines)
             {
-                var type = GetEPLType(line.Substring(0, 1).ToCharArray()[0]);
+                var strippedLine = StripComments(line);
+                var type = GetEPLType(strippedLine.Substring(0, 1).ToCharArray()[0]);
 
                 switch (type)
                 {
                     case EPLTypeEnum.String:
-                        RenderString(line, ref bmp);
+                        RenderString(strippedLine, ref bmp);
                         break;
                     case EPLTypeEnum.Barcode:
-                        RenderBarcode(line, ref bmp);
+                        RenderBarcode(strippedLine, ref bmp);
                         break;
                     case EPLTypeEnum.NewLine:
-                        ApplyNewLine(line, ref bmp);
+                        ApplyNewLine();
                         break;
-                    case EPLTypeEnum.Setting: // If a setting is defined midway, it only applies to lines after it
-                        ApplySetting(line);
+                    case EPLTypeEnum.Setting: // If a setting is defined midway, it only applies to strippedLines after it
+                        ApplySetting(strippedLine);
                         break;
                     case EPLTypeEnum.Format:
-                        ApplyFormat(line);
+                        ApplyFormat(strippedLine);
                         break;
                     case EPLTypeEnum.Quantity: // What do we do with this?
-                        SetQuantity(line);
+                        SetQuantity(strippedLine);
                         break;
                     case EPLTypeEnum.Unknown:
-                        var num = lines.ToList().IndexOf(line);
+                        var num = lines.ToList().IndexOf(strippedLine);
                         throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
                 }
             }
@@ -48,17 +49,19 @@ namespace libEPL2Bitmap
             return bmp;
         }
 
+        private void ApplyNewLine()
+        {
+            throw new NotImplementedException();
+        }
+
+        private string StripComments(string line) => line.Contains(";") ? line.Split(';')[0] : line;
+
         private static void SetQuantity(string line)
         {
             throw new NotImplementedException();
         }
 
         private static void ApplyFormat(string line)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void ApplyNewLine(string line, ref Bitmap bmp)
         {
             throw new NotImplementedException();
         }
@@ -77,9 +80,5 @@ namespace libEPL2Bitmap
         {
             throw new NotImplementedException();
         }
-
-        
     }
-
-
 }
