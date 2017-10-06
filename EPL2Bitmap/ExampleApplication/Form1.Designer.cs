@@ -30,6 +30,7 @@
         {
             this.btnLoad = new System.Windows.Forms.Button();
             this.pbLabel = new System.Windows.Forms.PictureBox();
+            this.btnSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbLabel)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,11 +52,23 @@
             this.pbLabel.TabIndex = 1;
             this.pbLabel.TabStop = false;
             // 
+            // btnSave
+            // 
+            this.btnSave.AccessibleName = "";
+            this.btnSave.Location = new System.Drawing.Point(396, 12);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 237);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "Save EPL bitmap";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(402, 261);
+            this.ClientSize = new System.Drawing.Size(483, 261);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.pbLabel);
             this.Controls.Add(this.btnLoad);
             this.Name = "Form1";
@@ -69,6 +82,7 @@
 
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.PictureBox pbLabel;
+        private System.Windows.Forms.Button btnSave;
     }
 }
 

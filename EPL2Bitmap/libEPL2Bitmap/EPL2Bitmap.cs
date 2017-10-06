@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 
 namespace libEPL2Bitmap
@@ -11,27 +12,40 @@ namespace libEPL2Bitmap
 
     public partial class EPL2Bitmap : IEPL2Bitmap
     {
-        public static Font font = new Font("Times New Roman", 12.0f);
+        public static Font font = new Font("Times New Roman", 10.0f);
+        public static Font barcode; // = new Font("Times New Roman", 10.0f);
         public static Graphics graphics;
-        public static Point point;
         public static int spacing;
+        public static string[] args;
+
+        public void Test(string name)
+        {
+            PrivateFontCollection modernFont = new PrivateFontCollection();
+            modernFont.AddFontFile(name);
+            barcode = new Font(modernFont.Families[0], 20.0f);
+        }
 
         public Bitmap ConvertFromString(string EPL)
         {
+            // Test(@".\free3of9\free3of9.ttf");
+            Test(@"free3of9.ttf");
+
+
             var lines = EPL.Split(Environment.NewLine.ToCharArray());
 
-            Bitmap bmp = new Bitmap(200, 200);
+            Bitmap bmp = new Bitmap(344, 200);
             graphics = Graphics.FromImage(bmp);
-            graphics.FillRectangle(Brushes.Gray, 0, 0, 200, 200);
-
-            // styling
-            point = new Point(0, 0);
+            graphics.FillRectangle(Brushes.White, 0, 0, 344, 200);
             spacing = 15;
-          
+
             foreach (var line in lines)
-            {
+            {      
                 if (line == string.Empty) continue;
                 var type = GetEPLType(line.Substring(0, 1).ToCharArray()[0]);
+
+                // split line and remove type
+                var test = line.Remove(0, 1);
+                args = test.Split(',');
 
                 switch (type)
                 {
@@ -55,41 +69,57 @@ namespace libEPL2Bitmap
                         break;
                     case EPLTypeEnum.Unknown:
                         var num = lines.ToList().IndexOf(line);
-                        throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
+                        break;
+                        // throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
                 }
             }
-            // ReSharper disable once ExpressionIsAlwaysNull
             return bmp;
+        }
+
+        public static int GetArg(int i)
+        {
+            return int.Parse(args[i]);
         }
 
         private static void SetQuantity(string line)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private static void ApplyFormat(string line)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private static void ApplyNewLine(string line, ref Bitmap bmp)
         {
-            point.Y += spacing;
+            
         }
 
         private static void ApplySetting(string line)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private static void RenderBarcode(string line, ref Bitmap bmp)
         {
-            throw new NotImplementedException();
+            int x = GetArg(0);
+            int y = GetArg(1);
+            int rotation = GetArg(2);
+            string text = args[8];
+            graphics.DrawString(text, barcode, Brushes.Black, x, y);
         }
 
         private static void RenderString(string line, ref Bitmap bmp)
         {
-            graphics.DrawString(line, font, Brushes.Black, point);
+            int x = GetArg(0);
+            int y = GetArg(1);
+            int rotation = GetArg(2);
+            int fontType = GetArg(3);
+            int height = GetArg(4);
+            int muliplier = GetArg(5);
+            string text = args[7];
+            graphics.DrawString(text, font, Brushes.Black, x, y);
         } 
     }
 }
