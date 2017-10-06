@@ -19,14 +19,24 @@ namespace ExampleApplication
         private void btnLoad_Click(object sender, EventArgs e)
         {
             // file browser
-            OpenFileDialog dialog = new OpenFileDialog();
-            DialogResult result = dialog.ShowDialog();
-            if (result != DialogResult.OK)
-                return;
+            string text;
+            using (var dialog = new OpenFileDialog())
+            {
+                var result = dialog.ShowDialog();
+                if (result != DialogResult.OK) return;
 
+<<<<<<< HEAD
             // load file into string
             string text = File.ReadAllText(dialog.FileName);
             label = Epl2Bitmap.ConvertFromString(text);//TODO: make open file dialog
+=======
+                // load file into string
+                text = File.ReadAllText(dialog.FileName);
+            }
+            Console.WriteLine(text);
+
+            var label = Epl2Bitmap.ConvertFromString(text);//TODO: make open file dialog
+>>>>>>> 6dfa3462eae31248ca6d1b13bf31b1fbf8a8eb06
             
             // draws to the bitmap not from it
             // pbLabel.DrawToBitmap(label, new Rectangle(new Point(), label.Size));

@@ -35,13 +35,21 @@ namespace libEPL2Bitmap
 
             Bitmap bmp = new Bitmap(344, 200);
             graphics = Graphics.FromImage(bmp);
+<<<<<<< HEAD
             graphics.FillRectangle(Brushes.White, 0, 0, 344, 200);
+=======
+            graphics.FillRectangle(Brushes.Gray, 0, 0, 200, 200); // if this is meant to be the size of the label (for background) make it the q/Q size
+
+            // styling
+            point = new Point(0, 0);
+>>>>>>> 6dfa3462eae31248ca6d1b13bf31b1fbf8a8eb06
             spacing = 15;
 
             foreach (var line in lines)
             {      
                 if (line == string.Empty) continue;
-                var type = GetEPLType(line.Substring(0, 1).ToCharArray()[0]);
+                var strippedLine = StripComments(line);
+                var type = GetEPLType(strippedLine.Substring(0, 1).ToCharArray()[0]);
 
                 // split line and remove type
                 var test = line.Remove(0, 1);
@@ -50,36 +58,52 @@ namespace libEPL2Bitmap
                 switch (type)
                 {
                     case EPLTypeEnum.String:
-                        RenderString(line, ref bmp);
+                        RenderString(strippedLine, ref bmp);
                         break;
                     case EPLTypeEnum.Barcode:
-                        RenderBarcode(line, ref bmp);
+                        RenderBarcode(strippedLine, ref bmp);
                         break;
                     case EPLTypeEnum.NewLine:
-                        ApplyNewLine(line, ref bmp);
+                        ApplyNewLine();
                         break;
-                    case EPLTypeEnum.Setting: // If a setting is defined midway, it only applies to lines after it
-                        ApplySetting(line);
+                    case EPLTypeEnum.Setting: // If a setting is defined midway, it only applies to strippedLines after it
+                        ApplySetting(strippedLine);
                         break;
                     case EPLTypeEnum.Format:
-                        ApplyFormat(line);
+                        ApplyFormat(strippedLine);
                         break;
                     case EPLTypeEnum.Quantity: // What do we do with this?
-                        SetQuantity(line);
+                        SetQuantity(strippedLine);
                         break;
                     case EPLTypeEnum.Unknown:
+<<<<<<< HEAD
                         var num = lines.ToList().IndexOf(line);
                         break;
                         // throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
+=======
+                        var num = lines.ToList().IndexOf(strippedLine);
+                        throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
+>>>>>>> 6dfa3462eae31248ca6d1b13bf31b1fbf8a8eb06
                 }
             }
             return bmp;
         }
 
+<<<<<<< HEAD
         public static int GetArg(int i)
         {
             return int.Parse(args[i]);
         }
+
+        private static void SetQuantity(string line)
+=======
+        private void ApplyNewLine()
+>>>>>>> 6dfa3462eae31248ca6d1b13bf31b1fbf8a8eb06
+        {
+            //throw new NotImplementedException();
+        }
+
+        private string StripComments(string line) => line.Contains(";") ? line.Split(';')[0] : line;
 
         private static void SetQuantity(string line)
         {
@@ -87,11 +111,6 @@ namespace libEPL2Bitmap
         }
 
         private static void ApplyFormat(string line)
-        {
-            //throw new NotImplementedException();
-        }
-
-        private static void ApplyNewLine(string line, ref Bitmap bmp)
         {
             
         }
@@ -112,6 +131,7 @@ namespace libEPL2Bitmap
 
         private static void RenderString(string line, ref Bitmap bmp)
         {
+<<<<<<< HEAD
             int x = GetArg(0);
             int y = GetArg(1);
             int rotation = GetArg(2);
@@ -121,5 +141,11 @@ namespace libEPL2Bitmap
             string text = args[7];
             graphics.DrawString(text, font, Brushes.Black, x, y);
         } 
+=======
+            throw new NotImplementedException();
+        }
+
+        
+>>>>>>> 6dfa3462eae31248ca6d1b13bf31b1fbf8a8eb06
     }
 }
