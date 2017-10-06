@@ -22,7 +22,7 @@ namespace libEPL2Bitmap
 
             Bitmap bmp = new Bitmap(200, 200);
             graphics = Graphics.FromImage(bmp);
-            graphics.FillRectangle(Brushes.Gray, 0, 0, 200, 200);
+            graphics.FillRectangle(Brushes.Gray, 0, 0, 200, 200); // if this is meant to be the size of the label (for background) make it the q/Q size
 
             // styling
             point = new Point(0, 0);
