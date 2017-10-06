@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using libEPL2Bitmap;
+using System.IO;
 
 namespace ExampleApplication
 {
@@ -15,8 +16,23 @@ namespace ExampleApplication
 
         private void btnLoad_Click(object sender, EventArgs e)
         {
-            var label = Epl2Bitmap.ConvertFromString("");//TODO: make open file dialog
-            pbLabel.DrawToBitmap(label, new Rectangle(new Point(), label.Size));
+            // file browser
+            OpenFileDialog dialog = new OpenFileDialog();
+            DialogResult result = dialog.ShowDialog();
+            if (result != DialogResult.OK)
+                return;
+
+            // load file into string
+            string text = File.ReadAllText(dialog.FileName);
+            Console.WriteLine(text);
+
+            var label = Epl2Bitmap.ConvertFromString(text);//TODO: make open file dialog
+            
+            // draws to the bitmap not from it
+            // pbLabel.DrawToBitmap(label, new Rectangle(new Point(), label.Size));
+
+            pbLabel.SizeMode = PictureBoxSizeMode.StretchImage;
+            pbLabel.Image = label;
         }
     }
 }
