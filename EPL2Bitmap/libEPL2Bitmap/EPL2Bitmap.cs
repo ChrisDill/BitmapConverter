@@ -27,14 +27,13 @@ namespace libEPL2Bitmap
 
         public Bitmap ConvertFromString(string EPL)
         {
-            // Test(@".\free3of9\free3of9.ttf");
             Test(@"free3of9.ttf");
 
             var lines = EPL.Split(Environment.NewLine.ToCharArray());
 
-            Bitmap bmp = new Bitmap(344, 200);
+            Bitmap bmp = new Bitmap(344, 192);
             graphics = Graphics.FromImage(bmp);
-            graphics.FillRectangle(Brushes.White, 0, 0, 344, 200);
+            graphics.FillRectangle(Brushes.White, 0, 0, 344, 192);
             spacing = 15;
 
             foreach (var line in lines)
@@ -81,6 +80,16 @@ namespace libEPL2Bitmap
             return int.Parse(args[i]);
         }
 
+        public static void SetTransform(int x, int y, int rotation, int scaleX, int scaleY)
+        {
+            // rotate and scale around 0,0
+            graphics.ResetTransform();
+            graphics.TranslateTransform(x, y);
+            graphics.RotateTransform(rotation);
+            graphics.ScaleTransform(scaleX, scaleY);
+            graphics.TranslateTransform(-x, -y);
+        }
+
         private void ApplyNewLine()
         {
             //throw new NotImplementedException();
@@ -103,25 +112,74 @@ namespace libEPL2Bitmap
             //throw new NotImplementedException();
         }
 
+        // horizontal start position
+        // vertical start position
+        // rotation
+        // barcode selection
+        // narrow bar width
+        // wide bar width
+        // bar code height
+        // reverse image
         private static void RenderBarcode(string line, ref Bitmap bmp)
         {
-            int x = GetArg(0);
+            // if (args.Length != 9)
+                // throw (new ArgumentException());
+
+            int x = GetArg(0); 
             int y = GetArg(1);
-            int rotation = GetArg(2);
-            string text = args[8];
-            graphics.DrawString(text, barcode, Brushes.Black, x, y);
+            int rotation = GetArg(2) * 90;
+            string selection = args[3];
+            int narrow = GetArg(4);
+            int wide = GetArg(5);
+            int height = GetArg(6);
+            // char code = args[7];
+            string data = args[8];
+
+            SetTransform(x, y, rotation, 1, 1);
+            graphics.DrawString(data, barcode, Brushes.Black, x, y);
         }
 
+        // horizontal start position
+        // vertical start position
+        // rotation
+        // font selection
+        // horizontal multiplier
+        // vertical multiplier
+        // reverse image
         private static void RenderString(string line, ref Bitmap bmp)
         {
-            int x = GetArg(0);
+            if (args.Length < 8)
+                throw (new ArgumentException());
+            
+            int x = GetArg(0); 
             int y = GetArg(1);
-            int rotation = GetArg(2);
-            int fontType = GetArg(3);
-            int height = GetArg(4);
-            int muliplier = GetArg(5);
-            string text = args[7];
-            graphics.DrawString(text, font, Brushes.Black, x, y);
+            int rotation = GetArg(2) * 90; 
+            int fontType = GetArg(3); 
+            int scaleX = GetArg(4); 
+            int scaleY = GetArg(5);
+            EPLReverseTypeEnum type = GetEPLReverseType(args[6].ToCharArray()[0]);
+            string data = args[7];
+
+            // select brush type
+            Brush back;
+            Brush text;
+            if (type == EPLReverseTypeEnum.BlackOnWhite)
+            {
+                back = Brushes.White;
+                text = Brushes.Black;
+            }
+            else
+            {
+                back = Brushes.Black;
+                text = Brushes.White;          
+            }
+
+            // render to bitmap
+            // use size of text for background
+            var size = graphics.MeasureString(data, font);
+            SetTransform(x, y, rotation, scaleX, scaleY);
+            graphics.FillRectangle(back, x, y, size.Width, size.Height);
+            graphics.DrawString(data, font, text, x, y);
         }
     }
 }
