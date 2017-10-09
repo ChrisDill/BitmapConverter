@@ -73,6 +73,25 @@
             }
         }
 
+        private static EPLFormFunctions GetEPLFunction(char type)
+        {
+            switch (type)
+            {
+                case 'I':
+                    return EPLFormFunctions.Information;
+                case 'S':
+                    return EPLFormFunctions.Store;
+                case 'R':
+                    return EPLFormFunctions.Retrieve;
+                case 'K':
+                    return EPLFormFunctions.Delete;
+                case 'E':
+                    return EPLFormFunctions.End;
+                default:
+                    return EPLFormFunctions.Unknown;
+            }
+        }
+
         private static EPLReverseTypeEnum GetEPLReverseType(char type)
         {
             switch (type)

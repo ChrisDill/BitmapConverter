@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
@@ -18,16 +19,35 @@ namespace libEPL2Bitmap
         public static int spacing;
         public static string[] args;
 
-        public void Test(string name)
+        public Dictionary<string, string> forms;
+        public string currentForm = "";
+
+        public void LoadBarcodeFont(string name)
         {
             PrivateFontCollection modernFont = new PrivateFontCollection();
             modernFont.AddFontFile(name);
             barcode = new Font(modernFont.Families[0], 20.0f);
         }
 
+        public static int GetArg(int i)
+        {
+            return int.Parse(args[i]);
+        }
+
+        public static void SetTransform(int x, int y, int rotation, int scaleX, int scaleY)
+        {
+            // rotate and scale around 0,0
+            graphics.ResetTransform();
+            graphics.TranslateTransform(x, y);
+            graphics.RotateTransform(rotation);
+            graphics.ScaleTransform(scaleX, scaleY);
+            graphics.TranslateTransform(-x, -y);
+        }
+
         public Bitmap ConvertFromString(string EPL)
         {
-            Test(@"free3of9.ttf");
+            forms = new Dictionary<string, string>();
+            LoadBarcodeFont(@"free3of9.ttf");
 
             var lines = EPL.Split(Environment.NewLine.ToCharArray());
 
@@ -45,6 +65,10 @@ namespace libEPL2Bitmap
                 // split line and remove type
                 var test = line.Remove(0, 1);
                 args = test.Split(',');
+
+                // store commands in form
+                if (currentForm != string.Empty)
+                    forms[currentForm] += line;
 
                 switch (type)
                 {
@@ -70,24 +94,74 @@ namespace libEPL2Bitmap
                         var num = lines.ToList().IndexOf(strippedLine);
                         break;
                         // throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
+                    case EPLTypeEnum.Form:
+                        HandleForm(line);
+                        break;
                 }
             }
             return bmp;
         }
 
-        public static int GetArg(int i)
+        private void HandleForm(string line)
         {
-            return int.Parse(args[i]);
+            EPLFormFunctions function = GetEPLFunction(line.Substring(1, 1).ToCharArray()[0]);
+            line = line.Remove(0, 2);
+            switch (function)
+            {
+                case EPLFormFunctions.Information:          
+                    FormInformation();             
+                    break;
+                case EPLFormFunctions.Store:
+                    BeginForm(line);
+                    break;
+                case EPLFormFunctions.Retrieve:
+                   
+                    break;
+                case EPLFormFunctions.Delete:
+                    DeleteForm(line);
+                    break;
+                case EPLFormFunctions.End:
+                    EndForm();
+                    break;
+            }
         }
 
-        public static void SetTransform(int x, int y, int rotation, int scaleX, int scaleY)
+        private void FormInformation()
         {
-            // rotate and scale around 0,0
-            graphics.ResetTransform();
-            graphics.TranslateTransform(x, y);
-            graphics.RotateTransform(rotation);
-            graphics.ScaleTransform(scaleX, scaleY);
-            graphics.TranslateTransform(-x, -y);
+            string info = "Form information:" + Environment.NewLine;
+            foreach (var i in forms)
+            {
+                info += "1" + Environment.NewLine;
+                info += i.Key + Environment.NewLine;
+                info += "Form memory left:" + Environment.NewLine;
+            }
+            Console.WriteLine(info);
+            // drawString(info, 0, 0);
+        }
+
+        private void BeginForm(string line)
+        {
+            forms.Add(line, "");
+            currentForm = "";
+        }
+
+        private void DeleteForm(string line)
+        {
+            char arg = line.Substring(2, 1).ToCharArray()[0];
+            if (arg == '*')
+            {
+                forms.Clear();
+            }
+            else
+            {
+                forms.Remove(line);
+                currentForm = "";
+            }
+        }
+
+        private void EndForm()
+        {
+            currentForm = "";
         }
 
         private void ApplyNewLine()
