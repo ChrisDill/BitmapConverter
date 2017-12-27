@@ -36,9 +36,9 @@
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(315, 12);
+            this.btnLoad.Location = new System.Drawing.Point(335, 216);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(75, 237);
+            this.btnLoad.Size = new System.Drawing.Size(75, 48);
             this.btnLoad.TabIndex = 0;
             this.btnLoad.Text = "&Load EPL file";
             this.btnLoad.UseVisualStyleBackColor = true;
@@ -46,7 +46,8 @@
             // 
             // pbLabel
             // 
-            this.pbLabel.Location = new System.Drawing.Point(12, 12);
+            this.pbLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pbLabel.Location = new System.Drawing.Point(12, 27);
             this.pbLabel.Name = "pbLabel";
             this.pbLabel.Size = new System.Drawing.Size(297, 237);
             this.pbLabel.TabIndex = 1;
@@ -55,9 +56,9 @@
             // btnSave
             // 
             this.btnSave.AccessibleName = "";
-            this.btnSave.Location = new System.Drawing.Point(396, 12);
+            this.btnSave.Location = new System.Drawing.Point(443, 216);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 237);
+            this.btnSave.Size = new System.Drawing.Size(75, 48);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save EPL bitmap";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -67,12 +68,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(483, 261);
+            this.ClientSize = new System.Drawing.Size(541, 281);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.pbLabel);
             this.Controls.Add(this.btnLoad);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "EPL2Bitmap";
             ((System.ComponentModel.ISupportInitialize)(this.pbLabel)).EndInit();
             this.ResumeLayout(false);
 

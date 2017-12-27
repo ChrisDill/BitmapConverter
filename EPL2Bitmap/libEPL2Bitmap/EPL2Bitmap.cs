@@ -13,30 +13,53 @@ namespace libEPL2Bitmap
 
     public partial class EPL2Bitmap : IEPL2Bitmap
     {
+        public static bool debug = true;
         public static Font font = new Font("Times New Roman", 10.0f);
         public static Font barcode; // = new Font("Times New Roman", 10.0f);
         public static Graphics graphics;
         public static int spacing;
         public static string[] args;
+        public int width;
+        public int height;
 
+        // current form stores new commands
         public Dictionary<string, string> forms;
         public string currentForm = "";
 
-        public void LoadBarcodeFont(string name)
+        private static int GetArg(int i) { return int.Parse(args[i]); }
+
+        // store for use from form or output directly
+        private static void Log(string msg) //, object[] args = null) how to pass multiple args without compile error?
+        {
+            if (debug)
+            {
+                Console.WriteLine(msg);
+            }
+        }
+
+        // Load barcode font from file
+        private void LoadBarcodeFont(string name)
         {
             PrivateFontCollection modernFont = new PrivateFontCollection();
             modernFont.AddFontFile(name);
             barcode = new Font(modernFont.Families[0], 20.0f);
         }
 
-        public static int GetArg(int i)
+        // 203dpi
+        private static int[] sizes = { 6, 7, 10, 12, 24 };
+        private static void SetFont(int id)
         {
-            return int.Parse(args[i]);
+            // convert id to size
+            int size = sizes[id - 1];
+            if(font.Size != size)
+            {
+                font = new Font(font.FontFamily, size);
+            }
         }
 
-        public static void SetTransform(int x, int y, int rotation, int scaleX, int scaleY)
+        // rotate and scale around origin(0,0 top left)
+        private static void SetTransform(int x, int y, int rotation, int scaleX, int scaleY)
         {
-            // rotate and scale around 0,0
             graphics.ResetTransform();
             graphics.TranslateTransform(x, y);
             graphics.RotateTransform(rotation);
@@ -50,15 +73,21 @@ namespace libEPL2Bitmap
             LoadBarcodeFont(@"free3of9.ttf");
 
             var lines = EPL.Split(Environment.NewLine.ToCharArray());
+            width = 400;
+            height = 350;
 
-            Bitmap bmp = new Bitmap(344, 192);
+            Bitmap bmp = new Bitmap(width, height);
             graphics = Graphics.FromImage(bmp);
-            graphics.FillRectangle(Brushes.White, 0, 0, 344, 192);
+            graphics.FillRectangle(Brushes.White, 0, 0, bmp.Width, bmp.Height);
             spacing = 15;
+
+            Log("Converting EPL string...");
 
             foreach (var line in lines)
             {      
-                if (line == string.Empty) continue;
+                if (line == string.Empty)
+                    continue;
+
                 var strippedLine = StripComments(line);
                 var type = GetEPLType(strippedLine.Substring(0, 1).ToCharArray()[0]);
 
@@ -115,7 +144,7 @@ namespace libEPL2Bitmap
                     BeginForm(line);
                     break;
                 case EPLFormFunctions.Retrieve:
-                   
+                    RetrieveForm(line);
                     break;
                 case EPLFormFunctions.Delete:
                     DeleteForm(line);
@@ -135,6 +164,7 @@ namespace libEPL2Bitmap
                 info += i.Key + Environment.NewLine;
                 info += "Form memory left:" + Environment.NewLine;
             }
+            Log("FormInformation");
             Console.WriteLine(info);
             // drawString(info, 0, 0);
         }
@@ -143,6 +173,13 @@ namespace libEPL2Bitmap
         {
             forms.Add(line, "");
             currentForm = "";
+            Log("BeginForm " + line);
+        }
+
+        private void RetrieveForm(string line)
+        {
+            if (forms.ContainsKey(line))
+                currentForm = forms[line];
         }
 
         private void DeleteForm(string line)
@@ -157,15 +194,19 @@ namespace libEPL2Bitmap
                 forms.Remove(line);
                 currentForm = "";
             }
+            Log("DeleteForm" + line);
         }
 
         private void EndForm()
         {
             currentForm = "";
+            Log("EndForm");
         }
 
         private void ApplyNewLine()
         {
+            Log("ApplyNewLine");
+            graphics.FillRectangle(Brushes.White, 0, 0, width, height);
             //throw new NotImplementedException();
         }
 
@@ -173,16 +214,18 @@ namespace libEPL2Bitmap
 
         private static void SetQuantity(string line)
         {
+            Log("SetQuantity " + line);
             //throw new NotImplementedException();
         }
 
         private static void ApplyFormat(string line)
         {
-            
+            Log("ApplyFormat" + line);
         }
 
         private static void ApplySetting(string line)
         {
+            Log("ApplySetting " + line);
             //throw new NotImplementedException();
         }
 
@@ -206,8 +249,11 @@ namespace libEPL2Bitmap
             int narrow = GetArg(4);
             int wide = GetArg(5);
             int height = GetArg(6);
-            // char code = args[7];
+            char code = args[7].ToCharArray()[0];
             string data = args[8];
+
+            Log("RenderBarcode");
+            Log(string.Format("Position({0},{1}), Rotation({2}), Selection({3}), Narrow/Wide/Height({4},{5},{6}), Code({6}), Data({7})\n", x, y, rotation, selection, narrow, wide, height, code, data));
 
             SetTransform(x, y, rotation, 1, 1);
             graphics.DrawString(data, barcode, Brushes.Black, x, y);
@@ -228,30 +274,37 @@ namespace libEPL2Bitmap
             int x = GetArg(0); 
             int y = GetArg(1);
             int rotation = GetArg(2) * 90; 
-            int fontType = GetArg(3); 
+            int fontId = GetArg(3); 
             int scaleX = GetArg(4); 
             int scaleY = GetArg(5);
             EPLReverseTypeEnum type = GetEPLReverseType(args[6].ToCharArray()[0]);
             string data = args[7];
 
-            // select brush type
-            Brush back;
-            Brush text;
-            if (type == EPLReverseTypeEnum.BlackOnWhite)
+            // select brush
+            Brush back = null, text = null;
+            switch (type)
             {
-                back = Brushes.White;
-                text = Brushes.Black;
+                case EPLReverseTypeEnum.BlackOnWhite:
+                    back = Brushes.White;
+                    text = Brushes.Black;
+                    break;
+                case EPLReverseTypeEnum.WhiteOnBlack:
+                    back = Brushes.Black;
+                    text = Brushes.White;
+                    break;
+                case EPLReverseTypeEnum.Unknown:
+                    Log("EPLReverseTypeEnum Unknown. Cannot select brush type for string.");
+                    throw (new ArgumentException());
             }
-            else
-            {
-                back = Brushes.Black;
-                text = Brushes.White;          
-            }
+
+            Log("RenderString");
+            Log(string.Format("Position({0},{1}), Rotation({2}), Font({3}), Scale({4},{5}), Type({6}), Data({7})\n", x, y, rotation, fontId, scaleX, scaleY, type, data));
 
             // render to bitmap
             // use size of text for background
-            var size = graphics.MeasureString(data, font);
             SetTransform(x, y, rotation, scaleX, scaleY);
+            SetFont(fontId);
+            var size = graphics.MeasureString(data, font);
             graphics.FillRectangle(back, x, y, size.Width, size.Height);
             graphics.DrawString(data, font, text, x, y);
         }
