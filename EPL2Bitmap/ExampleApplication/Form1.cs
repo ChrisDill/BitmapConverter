@@ -15,8 +15,6 @@ namespace ExampleApplication
             InitializeComponent();
         }
 
-        public static Bitmap label = null;
-   
         private void btnLoad_Click(object sender, EventArgs e)
         {
             // file browser
@@ -25,11 +23,11 @@ namespace ExampleApplication
             {
                 var result = dialog.ShowDialog();
                 if (result != DialogResult.OK) return;
-                // load file into string
                 text = File.ReadAllText(dialog.FileName);
             }
 
             // testing thread
+            Bitmap label = null;
             Thread thread = new Thread(() => label = Epl2Bitmap.ConvertFromString(text));
             thread.Start();
             thread.Join();
@@ -43,8 +41,8 @@ namespace ExampleApplication
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (label != null)
-                label.Save("test.png");
+            if (pbLabel.Image != null)
+                pbLabel.Image.Save("test.png");
         }
     }
 }

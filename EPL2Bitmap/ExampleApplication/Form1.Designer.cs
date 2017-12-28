@@ -36,7 +36,7 @@
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(335, 216);
+            this.btnLoad.Location = new System.Drawing.Point(329, 216);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(75, 48);
             this.btnLoad.TabIndex = 0;
@@ -56,7 +56,7 @@
             // btnSave
             // 
             this.btnSave.AccessibleName = "";
-            this.btnSave.Location = new System.Drawing.Point(443, 216);
+            this.btnSave.Location = new System.Drawing.Point(420, 216);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 48);
             this.btnSave.TabIndex = 2;
@@ -68,7 +68,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(541, 281);
+            this.ClientSize = new System.Drawing.Size(510, 269);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.pbLabel);
             this.Controls.Add(this.btnLoad);
