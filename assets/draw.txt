@@ -1,0 +1,7 @@
+LE50,200,400,20
+LE200,50,20,400
+; EAN-13 and EAN-8.
+; UPC-A and UPC-E.
+; Code128.
+; ITF-14.
+; Code39.

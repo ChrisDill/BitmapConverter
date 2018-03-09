@@ -17,32 +17,41 @@ namespace ExampleApplication
 
         private void btnLoad_Click(object sender, EventArgs e)
         {
-            // file browser
+            // load EPL from file
             string text;
             using (var dialog = new OpenFileDialog())
             {
                 var result = dialog.ShowDialog();
-                if (result != DialogResult.OK) return;
+                if (result != DialogResult.OK)
+                {
+                    return;
+                }
                 text = File.ReadAllText(dialog.FileName);
+                LoadEPL(text);
+                // TODO: setting to process folders or if file not found
             }
-
-            // testing thread
-            Bitmap label = null;
-            Thread thread = new Thread(() => label = Epl2Bitmap.ConvertFromString(text));
-            thread.Start();
-            thread.Join();
-            // var label = Epl2Bitmap.ConvertFromString(text);
-
-            // draws to the bitmap not from it
-            // pbLabel.DrawToBitmap(label, new Rectangle(new Point(), label.Size));
-            pbLabel.SizeMode = PictureBoxSizeMode.StretchImage;
-            pbLabel.Image = label;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (pbLabel.Image != null)
                 pbLabel.Image.Save("test.png");
+        }
+
+        public void LoadEPL(string text)
+        {
+            Bitmap label = null;
+            Thread thread = new Thread(() =>
+            {
+                label = Epl2Bitmap.ConvertFromString(text);
+                Invoke(new Action(() =>
+                {
+                    pbLabel.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pbLabel.Image = label;
+                    Console.WriteLine("Updated bitmap");
+                }));
+            });
+            thread.Start();
         }
     }
 }

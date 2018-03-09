@@ -12,6 +12,8 @@
             Format, // Q / q
             Quantity, // P
             Form, // F Manipulate stored Form (functions) SortedList<string,[string|bmp]>?
+            Box, // X
+            Line, // L
             Unknown = -1
         }
 
@@ -68,6 +70,10 @@
                     return EPLTypeEnum.Quantity;
                 case 'F':
                     return EPLTypeEnum.Form;
+                case 'X':
+                    return EPLTypeEnum.Box;
+                case 'L':
+                    return EPLTypeEnum.Line;
                 default:
                     return EPLTypeEnum.Unknown;
             }

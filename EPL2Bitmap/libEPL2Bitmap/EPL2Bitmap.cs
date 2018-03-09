@@ -16,13 +16,12 @@ namespace libEPL2Bitmap
     }
     public partial class EPL2Bitmap : IEPL2Bitmap
     {
-        public static bool debug = true;
         public static List<Font> fonts = new List<Font>();
         public static Font barcode;
         public static Graphics graphics;
         public static string[] args;
-        public int width = 430;
-        public int height = 350;
+        public static int width = 430;
+        public static int height = 350;
         public Dictionary<string, string> forms;
         public string currentForm = "";
 
@@ -31,7 +30,7 @@ namespace libEPL2Bitmap
         private string StripComments(string line) => line.Contains(";") ? line.Split(';')[0] : line;
         private static void Log(string msg)
         {
-            if (debug) Console.WriteLine(msg);
+            Console.WriteLine(msg);
         }
 
         private void LoadFonts()
@@ -44,9 +43,23 @@ namespace libEPL2Bitmap
 
             // differnt sizes for text
             forms = new Dictionary<string, string>();
+            fonts.Add(new Font("Times New Roman", 6, FontStyle.Regular));
+            fonts.Add(new Font("Times New Roman", 7, FontStyle.Regular));
             fonts.Add(new Font("Times New Roman", 10, FontStyle.Regular));
-            fonts.Add(new Font("Times New Roman", 14, FontStyle.Regular));
+            fonts.Add(new Font("Times New Roman", 12, FontStyle.Regular));
             fonts.Add(new Font("Times New Roman", 24, FontStyle.Regular));
+        }
+
+        private static Bitmap ResizeBitmap(int w, int h, Bitmap bitmap)
+        {
+            // Bitmap b = new Bitmap(bitmap, w, h);
+            Bitmap b = new Bitmap(w, h);
+            Graphics g = Graphics.FromImage(b);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(bitmap, 0, 0, w, h);       
+            // width = w;
+            // height = h;
+            return b;
         }
 
         // 1-5
@@ -55,11 +68,7 @@ namespace libEPL2Bitmap
         // A-Z reserved for soft font storage
         // a-z reserved for printer dirver support for stoarge of user selected soft fonts
         // 6/7 - 14x19 dots
-        private static void SetFont(int id)
-        {
-          
-        }
-
+ 
         // rotate and scale around origin(0,0 top left)
         private static void SetTransform(int x, int y, int rotation, int scaleX, int scaleY)
         {
@@ -76,6 +85,8 @@ namespace libEPL2Bitmap
 
             var lines = EPL.Split(Environment.NewLine.ToCharArray());
 
+            width = 430;
+            height = 350;
             Bitmap bmp = new Bitmap(width, height);
             graphics = Graphics.FromImage(bmp);
             graphics.FillRectangle(Brushes.White, 0, 0, bmp.Width, bmp.Height);
@@ -83,16 +94,17 @@ namespace libEPL2Bitmap
             Log("Converting EPL string");
 
             foreach (var line in lines)
-            {      
-                if (line == string.Empty)
-                    continue;
-
-                // command arguments
+            {     
+                // command arguments, type varies in length
                 var strippedLine = StripComments(line);
-                // commands vary in length
                 // strippedline = strippedline.Remove(0, 1);
                 args = strippedLine.Split(',');
 
+                // return if no commands
+                if (strippedLine == string.Empty)
+                    continue;
+
+                // convert to enum type
                 var type = GetEPLType(args[0].Substring(0, 1).ToCharArray()[0]);
 
                 // split first argument, store number to remove type
@@ -117,7 +129,7 @@ namespace libEPL2Bitmap
                         ApplySetting(strippedLine);
                         break;
                     case EPLTypeEnum.Format:
-                        ApplyFormat(strippedLine);
+                        ApplyFormat(strippedLine, ref bmp);
                         break;
                     case EPLTypeEnum.Quantity: // What do we do with this?
                         SetQuantity(strippedLine);
@@ -129,8 +141,15 @@ namespace libEPL2Bitmap
                     case EPLTypeEnum.Form:
                         HandleForm(line);
                         break;
+                    case EPLTypeEnum.Box:
+                        RenderBox(line);
+                        break;
+                    case EPLTypeEnum.Line:
+                        RenderLine(line);
+                        break;
                 }
             }
+            bmp = ResizeBitmap(700, 700, bmp);
             return bmp;
         }
 
@@ -169,7 +188,7 @@ namespace libEPL2Bitmap
             }
             Log("FormInformation");
             Console.WriteLine(info);
-            // drawString(info, 0, 0);
+            // DrawString(info, 0, 0);
         }
 
         private void BeginForm(string line)
@@ -219,25 +238,29 @@ namespace libEPL2Bitmap
             //throw new NotImplementedException();
         }
 
-        private static void ApplyFormat(string line)
+        private static void ApplyFormat(string line, ref Bitmap bitmap)
         {
             Log("ApplyFormat" + line);
 
-            if (args[0] == "q")
-            {
-                // bitmap.width = args[1];
-            }
+            var format = line.ToCharArray()[0];
+            int width = bitmap.Width;
+            int height = bitmap.Height;
 
-            if (args[0] == "Q")
+            if (format == 'q')
             {
-
+                width = int.Parse(args[0]);
             }
+            else if (format == 'Q')
+            {
+                height = int.Parse(args[0]);
+            }
+            bitmap = ResizeBitmap(width, bitmap.Height, bitmap);
         }
 
         private static void ApplySetting(string line)
         {
             Log("ApplySetting " + line);
-            //throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         private static void RenderBarcode(string line, ref Bitmap bmp)
@@ -310,10 +333,66 @@ namespace libEPL2Bitmap
 
             // use size of text for background
             SetTransform(x, y, rotation, scaleX, scaleY);
-            SetFont(fontId);
-            var size = graphics.MeasureString(data, fonts[0]);
+            var font = fonts[fontId - 1];
+
+            var size = graphics.MeasureString(data, font);
             graphics.FillRectangle(back, x, y, size.Width, size.Height);
-            graphics.DrawString(data, fonts[0], text, x, y);
+            graphics.DrawString(data, font, text, x, y);
+        }
+
+        private void RenderBox(string line)
+        {
+            int x1 = GetArg(0);
+            int y1 = GetArg(1);
+            int thickness = GetArg(2);
+            int x2 = GetArg(3);
+            int y2 = GetArg(4);
+
+            // draw top left to bottom right
+            Rectangle box = new Rectangle();
+            box.X = Math.Min(x1, x2);
+            box.Y = Math.Min(y1, y2);
+            box.Width = Math.Abs(x1 - x2);
+            box.Height = Math.Abs(y1 - y2);
+
+            Pen pen = new Pen(Color.Black, thickness);
+            graphics.DrawRectangle(pen, box);
+        }
+
+        private void RenderLine(string line)
+        {
+            int x = GetArg(0);
+            int y = GetArg(1);
+            int lengthX = GetArg(2);
+            int lengthY = GetArg(3);
+
+            // LE xor
+            // LO draw black
+            // LS draw diagonal
+            // LW draw white
+
+            // temp check for type
+            // xor test
+            if (line.Contains("LE"))
+            {
+                Rectangle rect = new Rectangle(x, y, lengthX, lengthY);
+                Region region = new Region();
+                region.MakeEmpty();
+                region.Xor(rect);
+
+                graphics.FillRegion(Brushes.Black, region);
+            }
+            // normal line
+            else if (line.Contains("LO"))
+            {       
+                graphics.FillRectangle(Brushes.Black, x, y, lengthX, lengthY);
+            }
+            // diagonal line
+            else
+            {
+                Pen pen = new Pen(Color.Black, 1);
+                graphics.DrawLine(pen, new Point(x, y), new Point(lengthX, lengthY));
+            }
         }
     }
 }
