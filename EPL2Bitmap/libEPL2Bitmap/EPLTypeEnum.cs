@@ -1,6 +1,5 @@
 ﻿namespace libEPL2Bitmap
 {
-
     public partial class EPL2Bitmap
     {
         private enum EPLTypeEnum
@@ -50,6 +49,7 @@
             BlackOnWhite, // N
             Unknown = -1
         }
+
         private static EPLTypeEnum GetEPLType(char type)
         {
             switch (type)
@@ -111,6 +111,4 @@
             }
         }
     }
-
-
 }

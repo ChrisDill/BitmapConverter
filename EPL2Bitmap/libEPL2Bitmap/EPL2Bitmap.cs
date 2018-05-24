@@ -10,10 +10,19 @@ namespace libEPL2Bitmap
     // TODO:
     // text - font size selection, can't change size on font without a new one?)
     // barcode - scale(given in widths of bars?) Not implementing a barcode system myself.
+    // EAN13 and maybe EAN8 barcodes
+
+    /// <summary>
+    /// Create bitmap from string
+    /// </summary>
     public interface IEPL2Bitmap
     {
         Bitmap ConvertFromString(string EPL);
     }
+
+    /// <summary>
+    /// Create bitmap from EPL string
+    /// </summary>
     public partial class EPL2Bitmap : IEPL2Bitmap
     {
         public static List<Font> fonts = new List<Font>();
@@ -37,7 +46,7 @@ namespace libEPL2Bitmap
         {
             // external barcde font
             string name = @"free3of9.ttf";
-            PrivateFontCollection modernFont = new PrivateFontCollection();
+            var modernFont = new PrivateFontCollection();
             modernFont.AddFontFile(name);
             barcode = new Font(modernFont.Families[0], 20.0f);
 
@@ -69,7 +78,14 @@ namespace libEPL2Bitmap
         // a-z reserved for printer dirver support for stoarge of user selected soft fonts
         // 6/7 - 14x19 dots
  
-        // rotate and scale around origin(0,0 top left)
+        /// <summary>
+        /// rotate and scale around origin(0,0 top left)
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="rotation"></param>
+        /// <param name="scaleX"></param>
+        /// <param name="scaleY"></param>
         private static void SetTransform(int x, int y, int rotation, int scaleX, int scaleY)
         {
             graphics.ResetTransform();
@@ -79,6 +95,11 @@ namespace libEPL2Bitmap
             graphics.TranslateTransform(-x, -y);
         }
 
+        /// <summary>
+        /// Take the EPL string and convert it to a Bitmap object
+        /// </summary>
+        /// <param name="EPL"></param>
+        /// <returns></returns>
         public Bitmap ConvertFromString(string EPL)
         {
             LoadFonts();
@@ -153,6 +174,10 @@ namespace libEPL2Bitmap
             return bmp;
         }
 
+        /// <summary>
+        /// Handle commands to do with the form
+        /// </summary>
+        /// <param name="line"></param>
         private void HandleForm(string line)
         {
             EPLFormFunctions function = GetEPLFunction(line.Substring(1, 1).ToCharArray()[0]);
@@ -177,6 +202,9 @@ namespace libEPL2Bitmap
             }
         }
 
+        /// <summary>
+        /// Display form information, called from HandleForm()
+        /// </summary>
         private void FormInformation()
         {
             string info = "Form information:" + Environment.NewLine;
@@ -191,6 +219,10 @@ namespace libEPL2Bitmap
             // DrawString(info, 0, 0);
         }
 
+        /// <summary>
+        /// Start a new form
+        /// </summary>
+        /// <param name="line"></param>
         private void BeginForm(string line)
         {
             Log("BeginForm " + line);
@@ -198,12 +230,20 @@ namespace libEPL2Bitmap
             currentForm = "";
         }
 
+        /// <summary>
+        /// Set the current form to be used
+        /// </summary>
+        /// <param name="line"></param>
         private void RetrieveForm(string line)
         {
             if (forms.ContainsKey(line))
                 currentForm = forms[line];
         }
 
+        /// <summary>
+        /// Remmove a form
+        /// </summary>
+        /// <param name="line"></param>
         private void DeleteForm(string line)
         {
             Log("DeleteForm" + line);
@@ -260,139 +300,6 @@ namespace libEPL2Bitmap
         private static void ApplySetting(string line)
         {
             Log("ApplySetting " + line);
-            // throw new NotImplementedException();
-        }
-
-        private static void RenderBarcode(string line, ref Bitmap bmp)
-        {
-            if (args.Length < 9)
-                throw (new ArgumentException());
-
-            // horizontal start position
-            // vertical start position
-            // rotation
-            // barcode selection
-            // narrow bar width
-            // wide bar width
-            // bar code height
-            // reverse image
-            int x = GetArg(0); 
-            int y = GetArg(1);
-            int rotation = GetArg(2) * 90;
-            string selection = args[3];
-            int narrow = GetArg(4);
-            int wide = GetArg(5);
-            int height = GetArg(6);
-            char code = args[7].ToCharArray()[0];
-            string data = args[8];
-
-            Log("RenderBarcode " + string.Format("Position({0},{1}), Rotation({2}), Selection({3}), Narrow/Wide/Height({4},{5},{6}), Code({6}), Data({7})", x, y, rotation, selection, narrow, wide, height, code, data));
-
-            SetTransform(x, y, rotation, 1, 1);
-            graphics.DrawString(data, barcode, Brushes.Black, x, y);
-        }
-
-        private static void RenderString(string line, ref Bitmap bmp)
-        {
-            if (args.Length < 8)
-                throw (new ArgumentException());
-
-            // horizontal start position
-            // vertical start position
-            // rotation
-            // font selection
-            // horizontal multiplier
-            // vertical multiplier
-            // reverse image
-            int x = GetArg(0); 
-            int y = GetArg(1);
-            int rotation = GetArg(2) * 90; 
-            int fontId = GetArg(3); 
-            int scaleX = GetArg(4); 
-            int scaleY = GetArg(5);
-            EPLReverseTypeEnum type = GetEPLReverseType(args[6].ToCharArray()[0]);
-            string data = args[7];
-
-            Brush back = null, text = null;
-            switch (type)
-            {
-                case EPLReverseTypeEnum.BlackOnWhite:
-                    back = Brushes.White;
-                    text = Brushes.Black;
-                    break;
-                case EPLReverseTypeEnum.WhiteOnBlack:
-                    back = Brushes.Black;
-                    text = Brushes.White;
-                    break;
-                case EPLReverseTypeEnum.Unknown:
-                    Log("EPLReverseTypeEnum Unknown. Cannot select brush type for string.");
-                    throw (new ArgumentException());
-            }
-
-            Log("RenderString " + string.Format("Position({0},{1}), Rotation({2}), Font({3}), Scale({4},{5}), Type({6}), Data({7})", x, y, rotation, fontId, scaleX, scaleY, type, data));
-
-            // use size of text for background
-            SetTransform(x, y, rotation, scaleX, scaleY);
-            var font = fonts[fontId - 1];
-
-            var size = graphics.MeasureString(data, font);
-            graphics.FillRectangle(back, x, y, size.Width, size.Height);
-            graphics.DrawString(data, font, text, x, y);
-        }
-
-        private void RenderBox(string line)
-        {
-            int x1 = GetArg(0);
-            int y1 = GetArg(1);
-            int thickness = GetArg(2);
-            int x2 = GetArg(3);
-            int y2 = GetArg(4);
-
-            // draw top left to bottom right
-            Rectangle box = new Rectangle();
-            box.X = Math.Min(x1, x2);
-            box.Y = Math.Min(y1, y2);
-            box.Width = Math.Abs(x1 - x2);
-            box.Height = Math.Abs(y1 - y2);
-
-            Pen pen = new Pen(Color.Black, thickness);
-            graphics.DrawRectangle(pen, box);
-        }
-
-        private void RenderLine(string line)
-        {
-            int x = GetArg(0);
-            int y = GetArg(1);
-            int lengthX = GetArg(2);
-            int lengthY = GetArg(3);
-
-            // LE xor
-            // LO draw black
-            // LS draw diagonal
-            // LW draw white
-
-            // temp check for type
-            // xor test
-            if (line.Contains("LE"))
-            {
-                Rectangle rect = new Rectangle(x, y, lengthX, lengthY);
-                Region region = new Region();
-                region.MakeEmpty();
-                region.Xor(rect);
-
-                graphics.FillRegion(Brushes.Black, region);
-            }
-            // normal line
-            else if (line.Contains("LO"))
-            {       
-                graphics.FillRectangle(Brushes.Black, x, y, lengthX, lengthY);
-            }
-            // diagonal line
-            else
-            {
-                Pen pen = new Pen(Color.Black, 1);
-                graphics.DrawLine(pen, new Point(x, y), new Point(lengthX, lengthY));
-            }
         }
     }
 }

@@ -10,6 +10,8 @@ namespace ExampleApplication
     public partial class Form1 : Form
     {
         EPL2Bitmap Epl2Bitmap = new EPL2Bitmap();
+        string filename;
+
         public Form1()
         {
             InitializeComponent();
@@ -27,6 +29,7 @@ namespace ExampleApplication
                     return;
                 }
                 text = File.ReadAllText(dialog.FileName);
+                filename = Path.GetFileNameWithoutExtension(dialog.FileName);
                 LoadEPL(text);
                 // TODO: setting to process folders or if file not found
             }
@@ -35,13 +38,13 @@ namespace ExampleApplication
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (pbLabel.Image != null)
-                pbLabel.Image.Save("test.png");
+                pbLabel.Image.Save(filename + "_test.png");
         }
 
         public void LoadEPL(string text)
         {
             Bitmap label = null;
-            Thread thread = new Thread(() =>
+            var thread = new Thread(() =>
             {
                 label = Epl2Bitmap.ConvertFromString(text);
                 Invoke(new Action(() =>

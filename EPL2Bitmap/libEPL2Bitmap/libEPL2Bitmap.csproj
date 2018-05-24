@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EPL2Bitmap.cs" />
+    <Compile Include="EPLRender.cs" />
     <Compile Include="EPLTypeEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
