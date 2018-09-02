@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using BarcodeLib;
 
 namespace libEPL2Bitmap
 {
@@ -32,11 +33,13 @@ namespace libEPL2Bitmap
             int height = GetArg(6);
             char code = args[7].ToCharArray()[0];
             string data = args[8];
+            data = data.Replace("\"", "");
 
             Log("RenderBarcode " + string.Format("Position({0},{1}), Rotation({2}), Selection({3}), Narrow/Wide/Height({4},{5},{6}), Code({6}), Data({7})", x, y, rotation, selection, narrow, wide, height, code, data));
-
-            SetTransform(x, y, rotation, 1, 1);
-            graphics.DrawString(data, barcode, Brushes.Black, x, y);
+           
+            var bar = new Barcode(data);
+            var img = bar.Encode(TYPE.CODE11, data, Color.Black, Color.White, 150, 120);
+            graphics.DrawImage(img, x, y);
         }
 
         /// <summary>
@@ -65,6 +68,7 @@ namespace libEPL2Bitmap
             int scaleY = GetArg(5);
             var type = GetEPLReverseType(args[6].ToCharArray()[0]);
             string data = args[7];
+            data = data.Replace("\"", "");
 
             Brush back = null, text = null;
             switch (type)
