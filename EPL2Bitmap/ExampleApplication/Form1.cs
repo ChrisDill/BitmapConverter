@@ -31,8 +31,6 @@ namespace ExampleApplication
             string text;
             using (var dialog = new OpenFileDialog())
             {
-                //var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                //dialog.InitialDirectory = path + "../../";
                 var result = dialog.ShowDialog();
                 if (result != DialogResult.OK)
                 {
@@ -41,8 +39,8 @@ namespace ExampleApplication
                 text = File.ReadAllText(dialog.FileName);
                 filename = Path.GetFileNameWithoutExtension(dialog.FileName);
                 txtEditor.Text = text;
+                txtFilename.Text = filename;
                 //LoadEPL(text);
-                // TODO: setting to process folders or if file not found
             }
         }
 
@@ -105,6 +103,7 @@ namespace ExampleApplication
             {
                 var text = File.ReadAllText(files[0]);
                 txtEditor.Text = text;
+                txtFilename.Text = Path.GetFileNameWithoutExtension(files[0]);
                 //LoadEPL(text);
             }
         }

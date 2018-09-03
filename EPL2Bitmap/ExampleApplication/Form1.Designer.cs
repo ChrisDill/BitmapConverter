@@ -32,12 +32,13 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loadEPLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveEPLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.githubSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.cmbType = new System.Windows.Forms.ComboBox();
             this.txtEditor = new System.Windows.Forms.TextBox();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.saveFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtFilename = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbLabel)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -61,7 +62,7 @@
             this.githubSourceToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(585, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(600, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -79,6 +80,13 @@
             this.saveEPLToolStripMenuItem.Text = "Save bitmap";
             this.saveEPLToolStripMenuItem.Click += new System.EventHandler(this.saveEPLToolStripMenuItem_Click);
             // 
+            // saveFileToolStripMenuItem
+            // 
+            this.saveFileToolStripMenuItem.Name = "saveFileToolStripMenuItem";
+            this.saveFileToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
+            this.saveFileToolStripMenuItem.Text = "Save file";
+            this.saveFileToolStripMenuItem.Click += new System.EventHandler(this.saveFileToolStripMenuItem_Click);
+            // 
             // githubSourceToolStripMenuItem
             // 
             this.githubSourceToolStripMenuItem.Name = "githubSourceToolStripMenuItem";
@@ -92,7 +100,7 @@
             this.panel1.Controls.Add(this.menuStrip1);
             this.panel1.Location = new System.Drawing.Point(-2, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(585, 50);
+            this.panel1.Size = new System.Drawing.Size(600, 50);
             this.panel1.TabIndex = 3;
             // 
             // cmbType
@@ -101,32 +109,36 @@
             this.cmbType.Items.AddRange(new object[] {
             "EPL",
             "ZPL"});
-            this.cmbType.Location = new System.Drawing.Point(306, 50);
+            this.cmbType.Location = new System.Drawing.Point(305, 50);
             this.cmbType.Name = "cmbType";
-            this.cmbType.Size = new System.Drawing.Size(77, 21);
+            this.cmbType.Size = new System.Drawing.Size(93, 21);
             this.cmbType.TabIndex = 5;
             // 
             // txtEditor
             // 
-            this.txtEditor.Location = new System.Drawing.Point(306, 77);
+            this.txtEditor.Location = new System.Drawing.Point(305, 75);
             this.txtEditor.Multiline = true;
             this.txtEditor.Name = "txtEditor";
-            this.txtEditor.Size = new System.Drawing.Size(277, 273);
+            this.txtEditor.Size = new System.Drawing.Size(280, 275);
             this.txtEditor.TabIndex = 4;
             this.txtEditor.TextChanged += new System.EventHandler(this.txtEditor_TextChanged);
             // 
-            // saveFileToolStripMenuItem
+            // txtFilename
             // 
-            this.saveFileToolStripMenuItem.Name = "saveFileToolStripMenuItem";
-            this.saveFileToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
-            this.saveFileToolStripMenuItem.Text = "Save file";
-            this.saveFileToolStripMenuItem.Click += new System.EventHandler(this.saveFileToolStripMenuItem_Click);
+            this.txtFilename.BackColor = System.Drawing.SystemColors.Window;
+            this.txtFilename.Location = new System.Drawing.Point(420, 50);
+            this.txtFilename.Name = "txtFilename";
+            this.txtFilename.ReadOnly = true;
+            this.txtFilename.Size = new System.Drawing.Size(165, 20);
+            this.txtFilename.TabIndex = 6;
+            this.txtFilename.Text = "untitled";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(591, 360);
+            this.Controls.Add(this.txtFilename);
             this.Controls.Add(this.cmbType);
             this.Controls.Add(this.txtEditor);
             this.Controls.Add(this.pbLabel);
@@ -158,6 +170,7 @@
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.ComboBox cmbType;
         private System.Windows.Forms.ToolStripMenuItem saveFileToolStripMenuItem;
+        private System.Windows.Forms.TextBox txtFilename;
     }
 }
 
