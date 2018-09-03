@@ -31,11 +31,13 @@
             this.pbLabel = new System.Windows.Forms.PictureBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loadEPLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadZPLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveEPLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.githubSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.cmbType = new System.Windows.Forms.ComboBox();
+            this.txtEditor = new System.Windows.Forms.TextBox();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.saveFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pbLabel)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -54,8 +56,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadEPLToolStripMenuItem,
-            this.loadZPLToolStripMenuItem,
             this.saveEPLToolStripMenuItem,
+            this.saveFileToolStripMenuItem,
             this.githubSourceToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -66,16 +68,9 @@
             // loadEPLToolStripMenuItem
             // 
             this.loadEPLToolStripMenuItem.Name = "loadEPLToolStripMenuItem";
-            this.loadEPLToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
-            this.loadEPLToolStripMenuItem.Text = "Load EPL";
+            this.loadEPLToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
+            this.loadEPLToolStripMenuItem.Text = "Load file";
             this.loadEPLToolStripMenuItem.Click += new System.EventHandler(this.loadEPLToolStripMenuItem_Click);
-            // 
-            // loadZPLToolStripMenuItem
-            // 
-            this.loadZPLToolStripMenuItem.Name = "loadZPLToolStripMenuItem";
-            this.loadZPLToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
-            this.loadZPLToolStripMenuItem.Text = "Load ZPL";
-            this.loadZPLToolStripMenuItem.Click += new System.EventHandler(this.loadZPLToolStripMenuItem_Click);
             // 
             // saveEPLToolStripMenuItem
             // 
@@ -100,25 +95,46 @@
             this.panel1.Size = new System.Drawing.Size(585, 50);
             this.panel1.TabIndex = 3;
             // 
-            // textBox1
+            // cmbType
             // 
-            this.textBox1.Location = new System.Drawing.Point(306, 56);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(277, 135);
-            this.textBox1.TabIndex = 4;
+            this.cmbType.FormattingEnabled = true;
+            this.cmbType.Items.AddRange(new object[] {
+            "EPL",
+            "ZPL"});
+            this.cmbType.Location = new System.Drawing.Point(306, 50);
+            this.cmbType.Name = "cmbType";
+            this.cmbType.Size = new System.Drawing.Size(77, 21);
+            this.cmbType.TabIndex = 5;
+            // 
+            // txtEditor
+            // 
+            this.txtEditor.Location = new System.Drawing.Point(306, 77);
+            this.txtEditor.Multiline = true;
+            this.txtEditor.Name = "txtEditor";
+            this.txtEditor.Size = new System.Drawing.Size(277, 273);
+            this.txtEditor.TabIndex = 4;
+            this.txtEditor.TextChanged += new System.EventHandler(this.txtEditor_TextChanged);
+            // 
+            // saveFileToolStripMenuItem
+            // 
+            this.saveFileToolStripMenuItem.Name = "saveFileToolStripMenuItem";
+            this.saveFileToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
+            this.saveFileToolStripMenuItem.Text = "Save file";
+            this.saveFileToolStripMenuItem.Click += new System.EventHandler(this.saveFileToolStripMenuItem_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 349);
-            this.Controls.Add(this.textBox1);
+            this.ClientSize = new System.Drawing.Size(591, 360);
+            this.Controls.Add(this.cmbType);
+            this.Controls.Add(this.txtEditor);
             this.Controls.Add(this.pbLabel);
             this.Controls.Add(this.panel1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "EPL2Bitmap";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             ((System.ComponentModel.ISupportInitialize)(this.pbLabel)).EndInit();
@@ -138,8 +154,10 @@
         private System.Windows.Forms.ToolStripMenuItem saveEPLToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem githubSourceToolStripMenuItem;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ToolStripMenuItem loadZPLToolStripMenuItem;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtEditor;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.ComboBox cmbType;
+        private System.Windows.Forms.ToolStripMenuItem saveFileToolStripMenuItem;
     }
 }
 

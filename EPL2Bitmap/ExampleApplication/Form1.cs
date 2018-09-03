@@ -17,6 +17,12 @@ namespace ExampleApplication
         {
             InitializeComponent();
             AllowDrop = true;
+            cmbType.SelectedIndex = 0;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
 
         private void loadEPLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -34,22 +40,34 @@ namespace ExampleApplication
                 }
                 text = File.ReadAllText(dialog.FileName);
                 filename = Path.GetFileNameWithoutExtension(dialog.FileName);
-                LoadEPL(text);
+                txtEditor.Text = text;
+                //LoadEPL(text);
                 // TODO: setting to process folders or if file not found
             }
         }
 
-        private void loadZPLToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        // save image output
         private void saveEPLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (pbLabel.Image != null)
                 pbLabel.Image.Save(filename + "_test.png");
         }
 
+        // save editor output
+        private void saveFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new SaveFileDialog())
+            {
+                var result = dialog.ShowDialog();
+                if (result != DialogResult.OK)
+                {
+                    return;
+                }
+                File.WriteAllText(dialog.FileName, txtEditor.Text);
+            }
+        }
+
+        // open github page in browser
         private void githubSourceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ProcessStartInfo sInfo = new ProcessStartInfo("https://github.com/ChrisDill/EPL2Bitmap");
@@ -72,6 +90,7 @@ namespace ExampleApplication
             thread.Start();
         }
 
+        // drag and drop support of text files
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
@@ -85,8 +104,16 @@ namespace ExampleApplication
             if (files.Length > 0)
             {
                 var text = File.ReadAllText(files[0]);
-                LoadEPL(text);
+                txtEditor.Text = text;
+                //LoadEPL(text);
             }
+        }
+
+        // live edit text files
+        private void txtEditor_TextChanged(object sender, EventArgs e)
+        {
+            var text = txtEditor.Text;
+            LoadEPL(text);
         }
     }
 }

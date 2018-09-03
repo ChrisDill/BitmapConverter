@@ -45,10 +45,10 @@ namespace libEPL2Bitmap
         private void LoadFonts()
         {
             // external barcde font
-            string name = @"free3of9.ttf";
+            /*string name = @"free3of9.ttf";
             var modernFont = new PrivateFontCollection();
             modernFont.AddFontFile(name);
-            barcode = new Font(modernFont.Families[0], 20.0f);
+            barcode = new Font(modernFont.Families[0], 20.0f);*/
 
             // differnt sizes for text
             forms = new Dictionary<string, string>();
@@ -61,14 +61,16 @@ namespace libEPL2Bitmap
 
         private static Bitmap ResizeBitmap(int w, int h, Bitmap bitmap)
         {
-            // Bitmap b = new Bitmap(bitmap, w, h);
-            Bitmap b = new Bitmap(w, h);
-            Graphics g = Graphics.FromImage(b);
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.DrawImage(bitmap, 0, 0, w, h);       
-            // width = w;
-            // height = h;
-            return b;
+            width = w;
+            height = h;
+            Bitmap result = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(result))
+                g.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
+
+            // use new bitmap for render commands
+            graphics = Graphics.FromImage(result);
+
+            return result;
         }
 
         // 1-5
@@ -150,7 +152,7 @@ namespace libEPL2Bitmap
                         ApplySetting(strippedLine);
                         break;
                     case EPLTypeEnum.Format:
-                        ApplyFormat(strippedLine, ref bmp);
+                        bmp = ApplyFormat(strippedLine, bmp);
                         break;
                     case EPLTypeEnum.Quantity: // What do we do with this?
                         SetQuantity(strippedLine);
@@ -170,7 +172,7 @@ namespace libEPL2Bitmap
                         break;
                 }
             }
-            bmp = ResizeBitmap(700, 700, bmp);
+            //bmp = ResizeBitmap(700, 700, bmp);
             return bmp;
         }
 
@@ -278,7 +280,7 @@ namespace libEPL2Bitmap
             //throw new NotImplementedException();
         }
 
-        private static void ApplyFormat(string line, ref Bitmap bitmap)
+        private static Bitmap ApplyFormat(string line, Bitmap bitmap)
         {
             Log("ApplyFormat" + line);
 
@@ -294,7 +296,8 @@ namespace libEPL2Bitmap
             {
                 height = int.Parse(args[0]);
             }
-            bitmap = ResizeBitmap(width, bitmap.Height, bitmap);
+            var result = ResizeBitmap(width, bitmap.Height, bitmap);
+            return result;
         }
 
         private static void ApplySetting(string line)
