@@ -14,7 +14,10 @@ namespace libEPL2Bitmap
         private static void RenderBarcode(string line, ref Bitmap bmp)
         {
             if (args.Length < 9)
-                throw (new ArgumentException());
+            {
+                Log("RenderBarcode failed, 9 arguments required: " + line);
+                return;
+            }
 
             // horizontal start position
             // vertical start position
@@ -36,9 +39,91 @@ namespace libEPL2Bitmap
             data = data.Replace("\"", "");
 
             Log("RenderBarcode " + string.Format("Position({0},{1}), Rotation({2}), Selection({3}), Narrow/Wide/Height({4},{5},{6}), Code({6}), Data({7})", x, y, rotation, selection, narrow, wide, height, code, data));
-           
-            var bar = new Barcode(data);
-            var img = bar.Encode(TYPE.CODE11, data, Color.Black, Color.White, 150, 120);
+
+            // using selection, narrow, wide to determine which font to use(page 51 EPL spec)
+
+            // p4 value select font
+            switch (selection)
+            {
+                case "3":
+                    break;
+                case "3C":
+                    break;
+                case "9":
+                    break;
+                case "0":
+                    break;
+                case "1":
+                    break;
+                case "1A":
+                    break;
+                case "1B":
+                    break;
+                case "1C":
+                    break;
+                case "1D":
+                    break;
+                case "K":
+                    break;
+                case "E80":
+                    break;
+                case "E82":
+                    break;
+                case "E85":
+                    break;
+                case "E30":
+                    break;
+                case "E32":
+                    break;
+                case "E35":
+                    break;
+                case "2G":
+                    break;
+                case "2":
+                    break;
+                case "2C":
+                    break;
+                case "2D":
+                    break;
+                case "P":
+                    break;
+                case "PL":
+                    break;
+                case "J":
+                    break;
+                case "1E":
+                    break;
+                case "UA0":
+                    break;
+                case "UA2":
+                    break;
+                case "UA5":
+                    break;
+                case "UE0":
+                    break;
+                case "UE2":
+                    break;
+                case "UE5":
+                    break;
+                case "2U":
+                    break;
+                case "L":
+                    break;
+                case "M":
+                    break;
+            }
+
+            var type = TYPE.EAN13;
+            var bar = new Barcode(data, type);
+            bar.AlternateLabel = "1-11506-444551";
+            bar.IncludeLabel = true;
+            bar.LabelFont = fonts[3];
+            bar.LabelPosition = LabelPositions.BOTTOMCENTER;
+            bar.BarWidth = narrow;
+            bar.Height = height;
+
+            var img = bar.Encode(type, data, Color.Black, Color.White);
+            graphics.ResetTransform();
             graphics.DrawImage(img, x, y);
         }
 
@@ -58,7 +143,10 @@ namespace libEPL2Bitmap
         private static void RenderString(string line, ref Bitmap bmp)
         {
             if (args.Length < 8)
-                throw (new ArgumentException());
+            {
+                Log("RenderString failed, 8 arguments required: " + line);
+                return;
+            }
 
             int x = GetArg(0);
             int y = GetArg(1);
@@ -103,6 +191,12 @@ namespace libEPL2Bitmap
         /// <param name="line"></param>
         private void RenderBox(string line)
         {
+            if (args.Length < 5)
+            {
+                Log("RenderBox failed, 5 arguments required: " + line);
+                return;
+            }
+
             int x1 = GetArg(0);
             int y1 = GetArg(1);
             int thickness = GetArg(2);
@@ -126,6 +220,12 @@ namespace libEPL2Bitmap
         /// <param name="line"></param>
         private void RenderLine(string line)
         {
+            if (args.Length < 4)
+            {
+                Log("RenderLine failed, 4 arguments required: " + line);
+                return;
+            }
+
             int x = GetArg(0);
             int y = GetArg(1);
             int lengthX = GetArg(2);
