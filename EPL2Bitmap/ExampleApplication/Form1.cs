@@ -40,7 +40,7 @@ namespace ExampleApplication
                 filename = Path.GetFileNameWithoutExtension(dialog.FileName);
                 txtEditor.Text = text;
                 txtFilename.Text = filename;
-                //LoadEPL(text);
+                LoadEPL(text);
             }
         }
 
@@ -104,15 +104,24 @@ namespace ExampleApplication
                 var text = File.ReadAllText(files[0]);
                 txtEditor.Text = text;
                 txtFilename.Text = Path.GetFileNameWithoutExtension(files[0]);
-                //LoadEPL(text);
+                LoadEPL(text);
             }
         }
 
         // live edit text files
         private void txtEditor_TextChanged(object sender, EventArgs e)
         {
-            var text = txtEditor.Text;
-            LoadEPL(text);
+            // var text = txtEditor.Text;
+            // LoadEPL(text);
+        }
+
+        private void txtEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((ModifierKeys & Keys.Control) == Keys.Control && e.KeyCode == Keys.S)
+            {
+                var text = txtEditor.Text;
+                LoadEPL(text);
+            }
         }
     }
 }

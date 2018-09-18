@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Text;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace libEPL2Bitmap
 {
     // TODO:
-    // text - font size selection, can't change size on font without a new one?)
-    // barcode - scale(given in widths of bars?) Not implementing a barcode system myself.
-    // EAN13 and maybe EAN8 barcodes
+    // barcode - scale(given in widths of bars?)
 
     /// <summary>
     /// Create bitmap from string
@@ -33,6 +30,11 @@ namespace libEPL2Bitmap
         public static int height = 350;
         public Dictionary<string, string> forms;
         public string currentForm = "";
+
+        public EPL2Bitmap()
+        {
+            LoadFonts();
+        }
 
         // util
         private static int GetArg(int i) { return int.Parse(args[i]); }
@@ -104,8 +106,6 @@ namespace libEPL2Bitmap
         /// <returns></returns>
         public Bitmap ConvertFromString(string EPL)
         {
-            LoadFonts();
-
             var lines = EPL.Split(Environment.NewLine.ToCharArray());
 
             width = 430;
@@ -129,6 +129,9 @@ namespace libEPL2Bitmap
 
                 // convert to enum type
                 var type = GetEPLType(args[0].Substring(0, 1).ToCharArray()[0]);
+
+                // if (ZPL)
+                //     type = GetZPLType(args[0].Substring(0, 1).ToCharArray()[0]);
 
                 // split first argument, store number to remove type
                 args[0] = Regex.Match(args[0], @"\d+").ToString();
@@ -172,7 +175,8 @@ namespace libEPL2Bitmap
                         break;
                 }
             }
-            //bmp = ResizeBitmap(700, 700, bmp);
+            // bmp = ResizeBitmap(700, 700, bmp);
+            // bmp.Save("testing.png");
             return bmp;
         }
 

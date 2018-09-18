@@ -122,6 +122,7 @@
             this.txtEditor.Size = new System.Drawing.Size(280, 275);
             this.txtEditor.TabIndex = 4;
             this.txtEditor.TextChanged += new System.EventHandler(this.txtEditor_TextChanged);
+            this.txtEditor.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtEditor_KeyDown);
             // 
             // txtFilename
             // 
