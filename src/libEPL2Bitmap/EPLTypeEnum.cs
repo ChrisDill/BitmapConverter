@@ -25,11 +25,10 @@
             End, // End of stored function
             Unknown = -1
         }
-        
+
         private enum EPLFormatEnum
         {
-            
-            Width, // X
+            Width, // X (Width)
             /// <summary>
             /// how long the label is (hiehgt)
             /// </summary>

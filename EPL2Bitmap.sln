@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libEPL2Bitmap", "libEPL2Bitmap\libEPL2Bitmap.csproj", "{B6A07B64-FE2F-4C94-BA9C-C1145362AC7E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libEPL2Bitmap", "src\libEPL2Bitmap\libEPL2Bitmap.csproj", "{B6A07B64-FE2F-4C94-BA9C-C1145362AC7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApplication", "ExampleApplication\ExampleApplication.csproj", "{736B8DE7-09B5-4564-873F-4FF4D92A9C86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApplication", "src\ExampleApplication\ExampleApplication.csproj", "{736B8DE7-09B5-4564-873F-4FF4D92A9C86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -78,10 +78,10 @@ namespace libEPL2Bitmap
         // 1-5
         private static int[] sizes1 = { 6, 7, 10, 12, 24 }; // 203dpi
         private static int[] sizes2 = { 4, 6, 8, 10, 21 }; // 300dpi
-        // A-Z reserved for soft font storage
-        // a-z reserved for printer dirver support for stoarge of user selected soft fonts
-        // 6/7 - 14x19 dots
- 
+                                                           // A-Z reserved for soft font storage
+                                                           // a-z reserved for printer dirver support for stoarge of user selected soft fonts
+                                                           // 6/7 - 14x19 dots
+
         /// <summary>
         /// rotate and scale around origin(0,0 top left)
         /// </summary>
@@ -113,11 +113,11 @@ namespace libEPL2Bitmap
             Bitmap bmp = new Bitmap(width, height);
             graphics = Graphics.FromImage(bmp);
             graphics.FillRectangle(Brushes.White, 0, 0, bmp.Width, bmp.Height);
-  
+
             Log("Converting EPL string");
 
             foreach (var line in lines)
-            {     
+            {
                 // command arguments, type varies in length
                 var strippedLine = StripComments(line);
                 // strippedline = strippedline.Remove(0, 1);
@@ -135,7 +135,7 @@ namespace libEPL2Bitmap
 
                 // split first argument, store number to remove type
                 args[0] = Regex.Match(args[0], @"\d+").ToString();
-   
+
                 // store commands in form
                 if (currentForm != string.Empty)
                     forms[currentForm] += line;
@@ -163,7 +163,7 @@ namespace libEPL2Bitmap
                     case EPLTypeEnum.Unknown:
                         var num = lines.ToList().IndexOf(strippedLine);
                         break;
-                        // throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
+                    // throw new Exception($"unknown character on line: {num}:{Environment.NewLine}{line}");
                     case EPLTypeEnum.Form:
                         HandleForm(line);
                         break;
@@ -190,8 +190,8 @@ namespace libEPL2Bitmap
             line = line.Remove(0, 2);
             switch (function)
             {
-                case EPLFormFunctions.Information:          
-                    FormInformation();             
+                case EPLFormFunctions.Information:
+                    FormInformation();
                     break;
                 case EPLFormFunctions.Store:
                     BeginForm(line);
